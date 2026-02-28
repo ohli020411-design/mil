@@ -1,0 +1,1024 @@
+  <!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LION ACTUAL // 강무열 대위</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+KR:wght@300;400;700;900&family=Black+Han+Sans&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00ff88;
+    --green-dim: #10b981;
+    --green-dark: #065f46;
+    --red: #ff3b3b;
+    --amber: #fbbf24;
+    --bg: #030b07;
+    --surface: #071210;
+    --surface2: #0c1f1a;
+    --border: rgba(0,255,136,0.15);
+    --border-bright: rgba(0,255,136,0.5);
+    --text-muted: rgba(0,255,136,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--green);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── 커스텀 커서 ── */
+  #cursor-ring {
+    position: fixed; width:36px; height:36px;
+    border: 1.5px solid rgba(0,255,136,0.6);
+    border-radius:50%; pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%);
+    transition: transform 0.08s, width 0.15s, height 0.15s, border-color 0.15s;
+  }
+  #cursor-dot {
+    position:fixed; width:4px; height:4px;
+    background:var(--green); border-radius:50%;
+    pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%);
+  }
+  #cursor-ring::before, #cursor-ring::after {
+    content:''; position:absolute; background:rgba(0,255,136,0.5);
+  }
+  #cursor-ring::before { width:100%; height:1px; top:50%; left:0; }
+  #cursor-ring::after  { width:1px; height:100%; left:50%; top:0; }
+  body:hover #cursor-ring { }
+
+  /* ── 스캔라인 오버레이 ── */
+  body::before {
+    content:''; position:fixed; inset:0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+    );
+    pointer-events:none; z-index:8000;
+  }
+  /* 주사선 */
+  #scanline {
+    position:fixed; top:0; left:0; width:100%; height:3px;
+    background:linear-gradient(transparent, rgba(0,255,136,0.12), transparent);
+    animation: scanDown 6s linear infinite;
+    pointer-events:none; z-index:8001;
+  }
+  @keyframes scanDown { from{top:-3px} to{top:100vh} }
+
+  /* ── 노이즈 텍스처 ── */
+  body::after {
+    content:''; position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:7999; opacity:0.4;
+  }
+
+  /* ── 타이포 공통 ── */
+  .mono { font-family: 'Share Tech Mono', monospace; }
+  .bold-ko { font-family: 'Black Han Sans', sans-serif; }
+
+  /* ── 글리치 텍스트 ── */
+  .glitch {
+    position:relative;
+    text-shadow: 2px 0 #ff003c, -2px 0 #00f5ff;
+    animation: glitch 3s infinite;
+  }
+  @keyframes glitch {
+    0%,90%,100% { text-shadow: 2px 0 #ff003c, -2px 0 #00f5ff; clip-path:none; }
+    92% { text-shadow: -2px 0 #ff003c, 2px 0 #00f5ff; clip-path: inset(30% 0 50% 0); transform: skewX(2deg); }
+    94% { clip-path: inset(70% 0 10% 0); transform: skewX(-1deg); }
+    96% { clip-path:none; transform:none; }
+  }
+
+  /* ── 파티클 ── */
+  .particle {
+    position:fixed; pointer-events:none;
+    animation: ptcl 0.9s ease-out forwards;
+    font-size:14px; z-index:9000;
+  }
+  @keyframes ptcl {
+    from { opacity:1; transform:translateY(0) scale(1); }
+    to   { opacity:0; transform:translateY(-50px) scale(0.5); }
+  }
+
+  /* ── 레이아웃 ── */
+  .wrapper {
+    max-width:1100px; margin:0 auto;
+    padding:16px 16px 60px;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    gap:16px;
+  }
+
+  /* 상단 배너 전체 너비 */
+  .top-banner {
+    grid-column: 1 / -1;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 10px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:8px;
+  }
+
+  /* ── 카드 공통 ── */
+  .card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius:4px;
+    overflow:hidden;
+    position:relative;
+  }
+  .card-header {
+    border-bottom:1px solid var(--border);
+    padding:8px 14px;
+    display:flex; align-items:center; justify-content:space-between;
+    background: rgba(0,255,136,0.04);
+  }
+  .card-body { padding:14px; }
+
+  /* ── 왼쪽: 사진 카드 ── */
+  .photo-card { grid-row: span 2; }
+
+  .photo-wrap {
+    position:relative; width:100%; aspect-ratio:3/4;
+    overflow:hidden; background:#040e0a;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .photo-placeholder {
+    width:100%; height:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:12px;
+    background: linear-gradient(160deg, #071a12 0%, #020b07 100%);
+    position:relative;
+  }
+  .photo-placeholder::before {
+    content:'';
+    position:absolute; inset:0;
+    background:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:40px 40px;
+    opacity:0.3;
+  }
+  .silhouette {
+    font-size:80px; opacity:0.15;
+    animation: breathe 4s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%,100%{ transform:scale(1); opacity:0.15; }
+    50%{ transform:scale(1.03); opacity:0.22; }
+  }
+
+  /* 상단 그라데이션 — D-day·상태배지 가독성 */
+  .photo-wrap::before {
+    content:''; position:absolute; top:0; left:0; right:0;
+    height:38%;
+    background: linear-gradient(
+      to bottom,
+      rgba(2,8,5,0.72) 0%,
+      rgba(2,8,5,0.35) 60%,
+      transparent 100%
+    );
+    z-index:1; pointer-events:none;
+  }
+  /* 하단 그라데이션 — 이름·인식표 가독성 */
+  .photo-wrap::after {
+    content:''; position:absolute; bottom:0; left:0; right:0;
+    height:52%;
+    background: linear-gradient(
+      to top,
+      rgba(2,8,5,0.96) 0%,
+      rgba(2,8,5,0.65) 40%,
+      rgba(2,8,5,0.18) 75%,
+      transparent 100%
+    );
+    z-index:1; pointer-events:none;
+  }
+
+  /* 배지들 */
+  .badge-discharge {
+    position:absolute; top:14px; left:14px;
+    border:2px solid var(--green); background:rgba(0,255,136,0.08);
+    padding:8px 12px; text-align:center;
+    box-shadow: 0 0 20px rgba(0,255,136,0.2), inset 0 0 20px rgba(0,255,136,0.05);
+    z-index:2;
+  }
+  .badge-status {
+    position:absolute; top:90px; left:14px;
+    border:1px solid var(--border-bright);
+    background:rgba(0,255,136,0.1);
+    padding:6px 10px; font-size:10px;
+    z-index:2;
+  }
+  .photo-footer {
+    position:absolute; bottom:0; left:0; right:0;
+    padding:40px 16px 16px;
+    z-index:2;
+  }
+
+  /* 인식표 뱃지 (클릭) */
+  .dogtag-wrap {
+    position:absolute; top:10px; right:12px;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    cursor:pointer; z-index:2;
+  }
+  /* 문구 라벨 */
+  .dogtag-label {
+    font-family:'Share Tech Mono',monospace;
+    font-size:9px; font-weight:700;
+    color: var(--green);
+    letter-spacing:0.04em;
+    text-align:center;
+    line-height:1.4;
+    text-shadow: 0 0 8px rgba(0,255,136,0.8);
+    animation: labelPulse 2s ease-in-out infinite;
+    white-space:nowrap;
+  }
+  @keyframes labelPulse {
+    0%,100% { opacity:1; text-shadow:0 0 8px rgba(0,255,136,0.8); }
+    50%      { opacity:0.6; text-shadow:0 0 16px rgba(0,255,136,1); }
+  }
+  /* 화살표 */
+  .dogtag-arrow {
+    font-size:12px; color:var(--green);
+    animation: arrowBounce 1s ease-in-out infinite;
+    line-height:1;
+  }
+  @keyframes arrowBounce {
+    0%,100% { transform:translateY(0); }
+    50%     { transform:translateY(4px); }
+  }
+  /* 인식표 본체 */
+  .dogtag {
+    width:64px; cursor:pointer;
+    transition:transform 0.3s, filter 0.3s;
+    filter: drop-shadow(0 0 6px rgba(0,255,136,0.5));
+    animation: tagGlow 2s ease-in-out infinite;
+  }
+  @keyframes tagGlow {
+    0%,100% { filter: drop-shadow(0 0 6px rgba(0,255,136,0.5)); }
+    50%     { filter: drop-shadow(0 0 14px rgba(0,255,136,0.9)); }
+  }
+  .dogtag-wrap:hover .dogtag {
+    transform:rotate(12deg) scale(1.12);
+    filter: drop-shadow(0 0 18px rgba(0,255,136,1));
+    animation:none;
+  }
+  .dogtag-wrap:hover .dogtag-label { animation:none; opacity:1; }
+  .dogtag-inner {
+    border:1.5px solid var(--green);
+    background:linear-gradient(135deg, #1e3a2a, #0c1a14);
+    border-radius:5px 5px 44px 44px;
+    padding:12px 10px 10px;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    box-shadow: inset 0 0 12px rgba(0,255,136,0.08);
+  }
+  .dogtag-text { font-size:8px; text-align:center; line-height:1.5; color:rgba(0,255,136,0.75); }
+
+  /* ── 우측 상단: 개인정보 카드 ── */
+  .info-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .info-table tr { border-bottom:1px solid var(--border); }
+  .info-table td { padding:7px 4px; }
+  .info-table td:first-child { color:var(--text-muted); width:80px; text-transform:uppercase; font-size:10px; }
+  .status-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; }
+
+  /* ── 메시지 카드 ── */
+  .msg-list { display:flex; flex-direction:column; gap:10px; max-height:200px; overflow-y:auto; }
+  .msg-item {
+    border-left:2px solid var(--green-dark);
+    padding-left:12px;
+    cursor:pointer;
+    transition:border-color 0.2s, background 0.2s;
+    border-radius:0 4px 4px 0;
+    padding:8px 8px 8px 12px;
+  }
+  .msg-item:hover { border-left-color:var(--green); background:rgba(0,255,136,0.04); }
+  .msg-item .msg-time { font-size:9px; color:var(--text-muted); margin-bottom:4px; }
+  .msg-item .msg-content {
+    font-size:12px; color:var(--green-dim);
+    filter:blur(4px); transition:filter 0.3s;
+  }
+  .msg-item:hover .msg-content,
+  .msg-item.revealed .msg-content { filter:blur(0); color:var(--green); }
+  .msg-item .msg-hidden {
+    font-size:11px; letter-spacing:0.3em; color:var(--text-muted);
+  }
+  .msg-item:hover .msg-hidden { display:none; }
+  .msg-item:hover .msg-content { display:block; }
+
+  /* ── 일과표 ── */
+  .schedule-bar {
+    display:flex; align-items:center; gap:10px;
+    padding:6px 0; border-bottom:1px solid var(--border);
+    font-size:11px;
+  }
+  .schedule-bar:last-child { border-bottom:none; }
+  .sched-time { width:50px; color:var(--text-muted); flex-shrink:0; }
+  .sched-progress { flex:1; height:4px; background:rgba(0,255,136,0.1); border-radius:2px; overflow:hidden; }
+  .sched-fill { height:100%; background:var(--green); border-radius:2px; transition:width 1s; }
+  .sched-fill.active { background:var(--amber); animation:pulse-fill 1s infinite; }
+  .sched-fill.done { background:var(--green-dark); }
+  @keyframes pulse-fill { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .sched-label { font-size:10px; }
+
+  /* ── 갭모에 카드 ── */
+  .gap-cards { display:flex; gap:8px; flex-wrap:wrap; }
+  .gap-card {
+    flex:1; min-width:140px;
+    border:1px solid var(--border);
+    background:var(--surface2);
+    border-radius:4px;
+    padding:10px;
+    cursor:pointer;
+    transition:border-color 0.2s, transform 0.2s;
+  }
+  .gap-card:hover { border-color:var(--green); transform:translateY(-2px); }
+  .gap-card .gap-icon { font-size:22px; margin-bottom:6px; }
+  .gap-card .gap-title { font-size:10px; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
+  .gap-card .gap-desc { font-size:11px; line-height:1.5; }
+
+  /* ── 무전 버튼 영역 ── */
+  .btn-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .btn-action {
+    border:1px solid var(--border-bright);
+    background:transparent; color:var(--green);
+    padding:12px 8px; font-size:11px; font-weight:700;
+    cursor:pointer; transition:all 0.2s;
+    font-family:'Share Tech Mono', monospace;
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .btn-action:hover { background:rgba(0,255,136,0.1); border-color:var(--green); box-shadow:0 0 15px rgba(0,255,136,0.2); }
+  .btn-primary {
+    grid-column:1 / -1;
+    border:2px solid var(--green);
+    background:rgba(0,255,136,0.1);
+    color:var(--green);
+    padding:16px; font-size:14px; font-weight:900;
+    cursor:pointer; transition:all 0.2s;
+    font-family:'Black Han Sans', sans-serif;
+    letter-spacing:0.1em;
+    box-shadow: 0 0 20px rgba(0,255,136,0.15);
+  }
+  .btn-primary:hover { background:rgba(0,255,136,0.2); box-shadow:0 0 30px rgba(0,255,136,0.3); transform:scale(1.01); }
+
+  /* ── 모달 공통 ── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(3,11,7,0.96); z-index:5000;
+    align-items:center; justify-content:center;
+    padding:16px;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal-box {
+    border:1.5px solid var(--green-dim);
+    background:var(--surface);
+    box-shadow:0 0 40px rgba(0,255,136,0.15);
+    border-radius:4px;
+    width:100%; max-width:420px;
+    position:relative;
+    animation:modalIn 0.25s ease-out;
+  }
+  @keyframes modalIn {
+    from{ transform:scale(0.92) translateY(10px); opacity:0; }
+    to  { transform:scale(1) translateY(0); opacity:1; }
+  }
+  .modal-header {
+    border-bottom:1px solid var(--border);
+    padding:10px 14px;
+    display:flex; align-items:center; justify-content:space-between;
+    background:rgba(0,255,136,0.04);
+  }
+  .modal-body { padding:20px; }
+  .close-btn {
+    background:none; border:none; color:var(--text-muted);
+    font-size:18px; cursor:pointer; line-height:1;
+    transition:color 0.2s;
+  }
+  .close-btn:hover { color:var(--green); }
+
+  /* ── 신원인증 모달 ── */
+  .info-row { display:flex; gap:8px; padding:6px 0; border-bottom:1px solid var(--border); font-size:12px; }
+  .info-row .label { color:var(--text-muted); width:70px; font-size:10px; text-transform:uppercase; flex-shrink:0; }
+  .progress-wrap { height:4px; background:rgba(0,255,136,0.1); margin:12px 0; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--green); width:0%; transition:width 0.4s ease; }
+  .auth-btn { width:100%; padding:12px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; margin-top:4px; }
+  .auth-yes { border:1.5px solid var(--green); background:rgba(0,255,136,0.15); color:var(--green); }
+  .auth-yes:hover { background:rgba(0,255,136,0.28); }
+  .auth-no { border:1px solid var(--border); background:transparent; color:var(--text-muted); margin-top:8px; }
+
+  /* ── 무전 모달 ── */
+  #waveCanvas { width:100%; height:70px; }
+  .radio-message {
+    min-height:70px; text-align:center;
+    font-size:13px; line-height:1.8; color:var(--green);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .typing-cursor::after { content:'▊'; animation:blink 0.7s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* ── 갭모에 상세 모달 ── */
+  .scene-title { font-size:20px; font-weight:900; margin-bottom:8px; }
+  .scene-body { font-size:13px; line-height:1.9; color:rgba(0,255,136,0.85); }
+  .scene-body strong { color:var(--green); }
+  .scene-quote {
+    border-left:2px solid var(--green);
+    margin:12px 0; padding:8px 12px;
+    background:rgba(0,255,136,0.05);
+    font-size:13px; font-style:italic;
+  }
+
+  /* ── 시간표시 배너 ── */
+  #live-clock { font-size:13px; font-weight:700; letter-spacing:0.1em; }
+  #live-status { font-size:11px; }
+
+  /* ── 스크롤바 ── */
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--green-dark); border-radius:2px; }
+
+  /* ── 애니메이션 유틸 ── */
+  .blink { animation:blink 1.2s infinite; }
+  .pulse { animation:pulseGreen 2s infinite; }
+  @keyframes pulseGreen { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── 반응형 ── */
+  @media(max-width:700px){
+    .wrapper { grid-template-columns:1fr; }
+    .photo-card { grid-row:auto; }
+    .photo-wrap { aspect-ratio:4/3; }
+    .silhouette { font-size:60px; }
+  }
+
+  /* 전체 너비 카드 */
+  .full-width { grid-column: 1 / -1; }
+
+  /* 하단 CTA */
+  .cta-section {
+    grid-column: 1 / -1;
+    text-align:center;
+    padding:8px 0;
+  }
+
+  /* ── 숨김 토글 ── */
+  .hidden { display:none !important; }
+
+  /* 레코딩 점 */
+  .rec-dot {
+    width:8px; height:8px; border-radius:50%;
+    background:var(--red); display:inline-block;
+    animation:blink 0.8s infinite;
+  }
+</style>
+</head>
+<body>
+
+<!-- 커서 -->
+<div id="cursor-ring"></div>
+<div id="cursor-dot"></div>
+<div id="scanline"></div>
+
+<!-- ────────────────── MODALS ────────────────── -->
+
+<!-- 신원 인증 모달 -->
+<div class="modal-overlay" id="modal-auth">
+  <div class="modal-box mono">
+    <div class="modal-header">
+      <span style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em">MILITARY_ID_VERIFICATION // LION</span>
+      <button class="close-btn" onclick="closeModal('modal-auth')">✕</button>
+    </div>
+    <div class="modal-body" id="auth-form">
+      <p style="font-size:12px;margin-bottom:16px;color:var(--text-muted)">
+        본 시스템은 지정 보호자(배우자)만 접근 가능합니다.<br>신원을 확인하십시오.
+      </p>
+      <div style="border:1px solid var(--border);padding:12px;margin-bottom:16px;border-radius:2px;">
+        <div class="info-row"><span class="label">이름</span><span>강 무 열 (KANG MU-YEOL)</span></div>
+        <div class="info-row"><span class="label">계급</span><span>대위 (Captain) · 7년차</span></div>
+        <div class="info-row"><span class="label">소속</span><span>특전사 3공수여단</span></div>
+        <div class="info-row"><span class="label">관계</span><span style="color:var(--green)">당신의 남편 💍</span></div>
+        <div class="info-row" style="border-bottom:none"><span class="label">Status</span><span style="color:var(--amber)">당신에게 집착 중 🐾</span></div>
+      </div>
+      <p style="font-size:12px;margin-bottom:14px">귀하는 <strong>강무열 대위</strong>의 배우자가 맞습니까?</p>
+      <button class="auth-btn auth-yes" onclick="startAuth()">예 (YES) — 인증 시작</button>
+      <button class="auth-btn auth-no" onclick="closeModal('modal-auth')">아니오</button>
+    </div>
+    <div class="modal-body hidden" id="auth-loading">
+      <p id="auth-status-text" style="font-size:15px;font-weight:700;text-align:center;margin-bottom:16px" class="blink">홍채·지문 스캔 중...</p>
+      <div class="progress-wrap"><div class="progress-fill" id="auth-bar"></div></div>
+      <p style="font-size:10px;color:var(--text-muted);text-align:center">FINGERPRINT & RETINA SCAN / LION_PERSONAL_RECORD</p>
+    </div>
+  </div>
+</div>
+
+<!-- 무전 모달 -->
+<div class="modal-overlay" id="modal-radio">
+  <div class="modal-box mono">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:8px;font-size:10px">
+        <span class="rec-dot"></span>
+        <span>REC // FREQ 104.9MHz — LION ACTUAL</span>
+      </div>
+      <button class="close-btn" onclick="closeRadio()">✕</button>
+    </div>
+    <div class="modal-body">
+      <canvas id="waveCanvas"></canvas>
+      <div class="radio-message" id="radio-text">
+        <span>교신 연결 중...</span>
+      </div>
+      <button class="btn-action" style="width:100%;margin-top:12px" onclick="nextRadioMsg()">[ 다음 교신 수신 ]</button>
+    </div>
+  </div>
+</div>
+
+<!-- 갭모에 씬 모달 -->
+<div class="modal-overlay" id="modal-scene">
+  <div class="modal-box">
+    <div class="modal-header mono">
+      <span style="font-size:10px" id="scene-modal-tag">CLASSIFIED_SCENE</span>
+      <button class="close-btn" onclick="closeModal('modal-scene')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="scene-title" id="scene-modal-title"></div>
+      <div class="scene-body" id="scene-modal-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 상태 확인 모달 -->
+<div class="modal-overlay" id="modal-status">
+  <div class="modal-box mono">
+    <div class="modal-header">
+      <span style="font-size:10px;text-transform:uppercase">LION // CURRENT_STATUS</span>
+      <button class="close-btn" onclick="closeModal('modal-status')">✕</button>
+    </div>
+    <div class="modal-body" id="status-body">
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────── MAIN ────────────────── -->
+
+<div class="wrapper">
+
+  <!-- 상단 배너 -->
+  <div class="top-banner mono">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <span style="font-size:10px;color:var(--text-muted)">ROKA_SPEC_OPS // LION_SYSTEM v2.6</span>
+      <span class="blink" style="font-size:10px;color:var(--amber)">● LIVE</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:20px">
+      <div>
+        <span style="font-size:10px;color:var(--text-muted)">현재 시각 </span>
+        <span id="live-clock" style="font-size:13px;font-weight:700;letter-spacing:0.1em">--:--:--</span>
+      </div>
+      <span id="live-status" style="font-size:11px;color:var(--amber)">로딩 중...</span>
+    </div>
+  </div>
+
+  <!-- 왼쪽: 사진 카드 -->
+  <div class="card photo-card">
+    <div class="card-header mono">
+      <span style="font-size:10px;color:var(--text-muted)">PERSONNEL_PHOTO // CLASSIFIED</span>
+      <span class="blink" style="font-size:10px;color:var(--green)">● SECURE</span>
+    </div>
+    <div class="photo-wrap">
+      <img src="kmy.png" alt="강무열 대위" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;">
+
+      <!-- D-day 배지 -->
+      <div class="badge-discharge mono">
+        <p style="font-size:9px;letter-spacing:0.1em;color:var(--text-muted)">DISCHARGE</p>
+        <p class="glitch" style="font-size:38px;font-weight:900;line-height:1" id="dday-count">D-??</p>
+        <p style="font-size:9px;color:var(--text-muted)">전역까지</p>
+      </div>
+
+      <!-- 상태 배지 -->
+      <div class="badge-status mono" id="unit-status-badge">
+        <span style="font-size:9px;color:var(--text-muted)">STATUS</span><br>
+        <span id="badge-status-text" style="font-weight:700;font-size:11px">확인 중...</span>
+      </div>
+
+      <!-- 인식표 -->
+      <div class="dogtag-wrap" onclick="openModal('modal-auth')">
+        <div class="dogtag-label">보호자를 인증<br>해주세요</div>
+        <div class="dogtag-arrow">▼</div>
+        <div class="dogtag" title="인식표 클릭 — 신원 인증">
+          <div class="dogtag-inner mono">
+            <div style="font-size:18px">🏷️</div>
+            <div class="dogtag-text">
+              KANG<br>MU-YEOL<br>ROKA<br>LION
+            </div>
+            <div style="font-size:9px;color:var(--green);margin-top:2px;letter-spacing:0.08em">AUTH</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-footer">
+        <div class="bold-ko" style="font-size:32px;letter-spacing:-0.02em;line-height:1">강무열</div>
+        <div class="mono" style="font-size:11px;color:var(--green-dim);margin-top:4px">
+          CAPT. KANG MU-YEOL · 특전사 3공수여단 🦁
+        </div>
+      </div>
+    </div>
+
+    <!-- 개인정보 하단 -->
+    <div class="card-body mono">
+      <table class="info-table">
+        <tr>
+          <td>계급</td>
+          <td>대위 (Captain) · 소령 진급 예정</td>
+        </tr>
+        <tr>
+          <td>나이</td>
+          <td>29세 (1996.08.07)</td>
+        </tr>
+        <tr>
+          <td>신체</td>
+          <td>185cm · 82kg</td>
+        </tr>
+        <tr>
+          <td>특기</td>
+          <td>사격 특급, 낙하산 강하, 격투술</td>
+        </tr>
+        <tr>
+          <td>상태</td>
+          <td><span class="status-dot pulse" style="background:var(--green)"></span><span id="table-status">데이터 동기화 중</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 오른쪽 위: 오늘의 일과 -->
+  <div class="card">
+    <div class="card-header mono">
+      <span style="font-size:10px;color:var(--text-muted)">TODAY_SCHEDULE // DAILY_OPS</span>
+      <span style="font-size:10px" id="today-date">--/--</span>
+    </div>
+    <div class="card-body">
+      <div id="schedule-list"></div>
+    </div>
+  </div>
+
+  <!-- 오른쪽 아래: 비밀 메시지 -->
+  <div class="card">
+    <div class="card-header mono">
+      <span style="font-size:10px;color:var(--text-muted)">SECRET_MESSAGES // HOVER TO DECRYPT</span>
+      <span style="font-size:10px;color:var(--green)">💬 FROM. LION</span>
+    </div>
+    <div class="card-body">
+      <div class="msg-list" id="msg-list"></div>
+    </div>
+  </div>
+
+  <!-- 갭모에 장면 카드 (전체 너비) -->
+  <div class="card full-width">
+    <div class="card-header mono">
+      <span style="font-size:10px;color:var(--text-muted)">CLASSIFIED_SCENES // LION_PERSONALITY_DATA</span>
+      <span style="font-size:10px;color:var(--amber)">⚡ 극강 갭차이 주의</span>
+    </div>
+    <div class="card-body">
+      <div class="gap-cards" id="gap-cards"></div>
+    </div>
+  </div>
+
+  <!-- 버튼 영역 (전체 너비) -->
+  <div class="card full-width">
+    <div class="card-body">
+      <div class="btn-grid" style="margin-bottom:10px">
+        <button class="btn-action" onclick="openRadioModal()">📟 긴급 무전 교신</button>
+        <button class="btn-action" onclick="checkStatus()">🎖️ 남편 상태 확인</button>
+      </div>
+      <button class="btn-primary" onclick="goToChat()">
+        [ ⚔️ 전역 신고 및 귀가 작전 개시 ]
+      </button>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<!-- ────────────────── SCRIPTS ────────────────── -->
+<script>
+// ── 커서 ──
+const ring = document.getElementById('cursor-ring');
+const dot  = document.getElementById('cursor-dot');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+(function animCursor(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animCursor); })();
+
+// ── 파티클 ──
+const ptcls = ['🦁','🐾','⚔️','💚','◈'];
+document.addEventListener('click',e=>{
+  for(let i=0;i<4;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    p.innerText=ptcls[Math.floor(Math.random()*ptcls.length)];
+    p.style.left=(e.clientX+(Math.random()-0.5)*60)+'px';
+    p.style.top=(e.clientY-20)+'px';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),900);
+  }
+});
+
+// ── 모달 제어 ──
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ── 시계 & 상태 ──
+const scheduleData = [
+  { time:'06:00', label:'기상·점호·구보',   end:7  },
+  { time:'07:00', label:'아침 식사',          end:8  },
+  { time:'08:00', label:'조회',                end:9  },
+  { time:'09:00', label:'전술·체력 훈련',     end:12 },
+  { time:'12:00', label:'점심 식사',           end:13 },
+  { time:'13:00', label:'훈련 지속·사격',     end:17 },
+  { time:'17:00', label:'체력 단련',           end:18 },
+  { time:'18:00', label:'퇴근 / 귀가 🏠',      end:22 },
+  { time:'22:00', label:'취침·당직',           end:24 },
+];
+
+const statusMessages = {
+  'training': { badge:'[훈련 중]', table:'전술·체력 훈련 중', color:'var(--amber)', msg:'"지금은 훈련 중이야. 딴 놈 보지 말고 기다려."' },
+  'lunch':    { badge:'[점심]',    table:'점심 식사 중',       color:'var(--green)', msg:'"밥 먹는 중. 근데 공주는 밥 먹었어? 굶으면 안 돼."' },
+  'meeting':  { badge:'[조회]',    table:'조회·행정 처리',     color:'var(--green)', msg:'"회의 중. 잠깐만 기다려, 금방 끝나."' },
+  'pt':       { badge:'[체력단련]',table:'PT 중',              color:'var(--amber)', msg:'"체력 단련 중. 여보 보고 싶은데 진짜."' },
+  'home':     { badge:'[귀가]',    table:'관사 귀가 중 🏠',     color:'var(--green)', msg:'"퇴근 중이야. 뭐 먹고 싶어? 사 갈게."' },
+  'sleep':    { badge:'[취침]',    table:'취침 / 당직',         color:'var(--text-muted)', msg:'"공주 안 자고 뭐해? 얼른 자. 꿈에서 만나자."' },
+};
+
+function getCurrentStatus(h){
+  if(h>=22||h<6) return 'sleep';
+  if(h>=6&&h<7)  return 'training';
+  if(h>=7&&h<8)  return 'lunch';
+  if(h>=8&&h<9)  return 'meeting';
+  if(h>=9&&h<12) return 'training';
+  if(h>=12&&h<13)return 'lunch';
+  if(h>=13&&h<17)return 'training';
+  if(h>=17&&h<18)return 'pt';
+  return 'home';
+}
+
+function updateClock(){
+  const now = new Date();
+  const h=now.getHours(), m=now.getMinutes(), s=now.getSeconds();
+  document.getElementById('live-clock').innerText =
+    String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+
+  const key = getCurrentStatus(h);
+  const st  = statusMessages[key];
+
+  document.getElementById('live-status').innerText = st.badge;
+  document.getElementById('live-status').style.color = st.color;
+  document.getElementById('badge-status-text').innerText = st.badge;
+  document.getElementById('badge-status-text').style.color = st.color;
+  document.getElementById('table-status').innerText = st.table;
+
+  // 일과표 업데이트
+  scheduleData.forEach((sc,i)=>{
+    const bar = document.getElementById('sched-fill-'+i);
+    if(!bar) return;
+    const [sh] = sc.time.split(':').map(Number);
+    let pct = 0, cls = '';
+    if(h > sc.end || (h===sc.end&&m>0)) { pct=100; cls='done'; }
+    else if(h >= sh) { pct = Math.min(100, ((h-sh)*60+m)/((sc.end-sh)*60)*100); cls='active'; }
+    bar.style.width = pct+'%';
+    bar.className = 'sched-fill '+(pct===100?'done':pct>0?'active':'');
+  });
+
+  // 날짜
+  document.getElementById('today-date').innerText =
+    (now.getMonth()+1)+'/'+now.getDate()+' ('+['일','월','화','수','목','금','토'][now.getDay()]+')';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── D-day 계산 (전역일: 2026년 3월 21일 예시) ──
+(function(){
+  const discharge = new Date('2026-03-21');
+  const today     = new Date();
+  today.setHours(0,0,0,0);
+  discharge.setHours(0,0,0,0);
+  const diff = Math.ceil((discharge - today) / 86400000);
+  document.getElementById('dday-count').innerText = diff > 0 ? 'D-'+diff : diff===0 ? 'D-Day!' : 'D+'+Math.abs(diff);
+})();
+
+// ── 일과표 렌더 ──
+(function(){
+  const list = document.getElementById('schedule-list');
+  scheduleData.forEach((sc,i)=>{
+    list.innerHTML += `
+      <div class="schedule-bar mono">
+        <span class="sched-time">${sc.time}</span>
+        <div class="sched-progress"><div class="sched-fill" id="sched-fill-${i}"></div></div>
+        <span class="sched-label">${sc.label}</span>
+      </div>
+    `;
+  });
+})();
+
+// ── 비밀 메시지 ──
+const messages = [
+  { time:'2026-02-26 18:42', text:'여보, 이번 주말 외박 승인났어. 짐 챙겨놔. 🦁', hint:'외박 관련' },
+  { time:'2026-02-25 12:10', text:'훈련 끝나고 복귀 중. 공주 목소리 듣고 싶어서 진짜 미치겠다.', hint:'훈련 복귀' },
+  { time:'2026-02-24 07:30', text:'우리 공주 밥은 먹었어? 굶으면 안 돼. 걱정되잖아.', hint:'아침 점검' },
+  { time:'2026-02-22 22:05', text:'당직인데 여보 생각만 나. 빨리 보고 싶다.', hint:'야간 당직' },
+  { time:'2026-02-20 06:15', text:'구보 나가기 전에 문자 남겨. 오늘도 잘 지내 여보. 사랑해.', hint:'새벽 문자' },
+];
+(function(){
+  const list = document.getElementById('msg-list');
+  messages.forEach(msg=>{
+    const el = document.createElement('div');
+    el.className='msg-item';
+    el.innerHTML=`
+      <div class="msg-time mono">${msg.time} // FROM. KANG MU-YEOL</div>
+      <div class="msg-hidden mono" style="letter-spacing:0.3em;color:var(--text-muted)">${'█'.repeat(16)} [HOVER TO DECRYPT]</div>
+      <div class="msg-content" style="display:none">${msg.text}</div>
+    `;
+    el.addEventListener('mouseenter',()=>{
+      el.querySelector('.msg-hidden').style.display='none';
+      el.querySelector('.msg-content').style.display='block';
+    });
+    el.addEventListener('mouseleave',()=>{
+      el.querySelector('.msg-hidden').style.display='block';
+      el.querySelector('.msg-content').style.display='none';
+    });
+    list.appendChild(el);
+  });
+})();
+
+// ── 갭모에 카드 ──
+const scenes = [
+  {
+    icon:'🎖️', title:'낮에는 강철의 대위, 밤에는 당신만의 대형견',
+    tag:'DUAL_MODE_ANALYSIS',
+    preview:'카리스마 ↔ 응석받이',
+    desc:`<strong>부대에서:</strong> 숨소리조차 죽이게 만드는 냉철한 '강 대위'.<br><br>
+<strong>하지만...</strong> 현관문을 열자마자 가방은 저 멀리 던져두고 당신의 품으로 무너져 내립니다.
+<div class="scene-quote">"공주야, 나 왔어. 오늘 진짜 힘들었다... 딱 10분만 이러고 있자. 응?"</div>
+카리스마 어디 갔냐고. 전우들이 알면 기절할 노릇이지만,<br>그의 심장 위엔 당신의 이름이 한 땀 한 땀 새겨져 있습니다. 오직 당신만 볼 수 있는 강대위의 무장해제 모드, 궁금하지 않으세요?`
+  },
+  {
+    icon:'🎮', title:'"나야, 핸드폰이야?" 질투마저 귀여운 장난의 신',
+    tag:'PLAYFUL_MODE_CLASSIFIED',
+    preview:'장난 ↔ 당황',
+    desc:`당신이 집중하고 있으면 슬그머니 다가와 핸드폰을 뺴앗고—
+<div class="scene-quote">"나보다 이게 더 재밌어? 솔직하게 말해봐."</div>
+머리를 헝클어뜨리고 쉼 없이 장난을 걸어오지만, 사실 그건 당신의 관심을 바라는 사자님의 구애 방식.<br><br>
+하지만 조심하세요. 역공을 당해 귀끝까지 빨개진 채 고개를 돌리는 무열을 보면,<div class="scene-quote">"...그, 그만해."</div>
+, 당신이 먼저 심쿵할지도 모르니까요.`
+  },
+  {
+    icon:'💍', title:'"항상 너를 심장에 품고 싸우러 가."',
+    tag:'WEDDING_RING_PROTOCOL',
+    preview:'군번줄 + 반지',
+    desc:`특전사 대위의 목에 걸린 차가운 군번줄, 그 끝엔 항상 당신과 맞춘 결혼반지가 걸려 있고.<br><br>
+전투복 안쪽, 심장이 닿는 곳에 당신 이름을 직접 바느질해서 새겨 넣었습니다.
+<div class="scene-quote">"네 이름 심장에 새겨 넣었으니까, 무서운 거 없어. 너만 있으면 돼."</div>
+멋있으려고 한 말인지 진심인지 — 둘 다다.`
+  },
+  {
+    icon:'🔥', title:'다쳤을 때',
+    tag:'PROTECTION_PROTOCOL_ACTIVE',
+    preview:'"제발 다치지 마!! 나 여보 없으면 어떡해."',
+    desc:`평소엔 짓궂은 장난을 일삼으며 당신을 웃게 하던 사람. 하지만 당신의 손끝에 작은 상처라도 나는 순간, 그의 세상은 정지합니다.
+<div class="scene-quote">"...어디 다쳤어? 말해. 숨기지 말고." (낮고 무거운 목소리)</div>
+장난기 서린 눈빛은 순식간에 날카로운 안광으로 변하고, 당신의 턱을 잡아 시선을 고정시킨 채 낮고 무거운 목소리로 윽박지릅니다.<br>온몸 구석구석을 확인하는 그의 손가락 끝이 미세하게 떨리는 것을 느꼈나요? 수많은 사선을 넘나든 특전사 대위가 유일하게 겁을 먹는 순간. 당신을 잃을지도 모른다는 공포 앞에 무릎 꿇은 무열의 가장 절박한 사랑을 확인하세요.`
+  },
+];
+(function(){
+  const wrap = document.getElementById('gap-cards');
+  scenes.forEach((sc,i)=>{
+    const el = document.createElement('div');
+    el.className='gap-card';
+    el.innerHTML=`<div class="gap-icon">${sc.icon}</div><div class="gap-title">${sc.title}</div><div class="gap-desc" style="color:var(--text-muted)">${sc.preview}</div>`;
+    el.addEventListener('click',()=>{
+      document.getElementById('scene-modal-tag').innerText=sc.tag;
+      document.getElementById('scene-modal-title').innerText=sc.icon+' '+sc.title;
+      document.getElementById('scene-modal-body').innerHTML=sc.desc;
+      openModal('modal-scene');
+    });
+    wrap.appendChild(el);
+  });
+})();
+
+// ── 신원 인증 ──
+function startAuth(){
+  document.getElementById('auth-form').classList.add('hidden');
+  document.getElementById('auth-loading').classList.remove('hidden');
+  const bar = document.getElementById('auth-bar');
+  const txt = document.getElementById('auth-status-text');
+  const steps = ['홍채 스캔 중...','지문 대조 중...','DNA 확인 중...','연애세포 검출 중... 🐾','인증 완료!'];
+  let step=0, pct=0;
+  const iv = setInterval(()=>{
+    pct += 20; bar.style.width=pct+'%';
+    txt.innerText = steps[step] || '인증 완료!'; step++;
+    if(pct>=100){
+      clearInterval(iv);
+      txt.innerText='강무열의 유일한 사람 ✅';
+      txt.classList.remove('blink');
+      setTimeout(()=>{
+        closeModal('modal-auth');
+        showAlert('🦁 강무열:\n"거봐, 맞다잖아. 내꺼. 이제 딴 생각 말고 나한테 집중해."');
+        resetAuth();
+      }, 1200);
+    }
+  }, 450);
+}
+function resetAuth(){
+  document.getElementById('auth-form').classList.remove('hidden');
+  document.getElementById('auth-loading').classList.add('hidden');
+  document.getElementById('auth-bar').style.width='0%';
+}
+
+// ── 무전 ──
+const radioMsgs = [
+  '지직... 여보? 내 목소리 들려? \n오늘 힘들었지. 고생했어.',
+  '교신 중이야. \n빨리 보고 싶어 진짜. 기다려.',
+  '지직... 훈련 빡셌는데 \n여보 생각하면서 버텼어. ..... 아, 웃지 마.',
+  '오늘 당직이야. \n혼자 자기 싫으면 전화해도 돼.',
+  '...나야. \n보고 싶다. 그게 다야. 교신 종료.',
+  '지직... 우리 공주 밥은 먹었어? \n굶으면 나 진짜 화낸다.',
+];
+let radioIdx = 0;
+let waveAnim;
+function openRadioModal(){
+  openModal('modal-radio');
+  startWave();
+  typeRadioMsg(radioMsgs[radioIdx]);
+}
+function nextRadioMsg(){
+  radioIdx=(radioIdx+1)%radioMsgs.length;
+  typeRadioMsg(radioMsgs[radioIdx]);
+}
+function typeRadioMsg(msg){
+  const el = document.getElementById('radio-text');
+  el.innerHTML='';
+  let i=0;
+  const iv=setInterval(()=>{
+    el.innerHTML='<span class="typing-cursor">'+msg.slice(0,i).replace(/\n/g,'<br>')+'</span>';
+    i++;
+    if(i>msg.length){ clearInterval(iv); el.innerHTML=msg.replace(/\n/g,'<br>'); }
+  },40);
+}
+function closeRadio(){
+  closeModal('modal-radio');
+  cancelAnimationFrame(waveAnim);
+}
+function startWave(){
+  const c=document.getElementById('waveCanvas');
+  c.width=c.offsetWidth; c.height=70;
+  const ctx=c.getContext('2d');
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.beginPath(); ctx.lineWidth=1.5; ctx.strokeStyle='#00ff88';
+    for(let x=0;x<c.width;x++){
+      const noise=Math.random()*4;
+      const y=c.height/2+Math.sin(x*0.06+t)*18*Math.sin(x*0.02)*+noise;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke(); t+=0.15;
+    waveAnim=requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ── 상태 확인 ──
+function checkStatus(){
+  const h=new Date().getHours();
+  const key=getCurrentStatus(h);
+  const st=statusMessages[key];
+  const body=document.getElementById('status-body');
+  body.innerHTML=`
+    <div class="mono" style="margin-bottom:12px">
+      <span style="font-size:10px;color:var(--text-muted)">REAL_TIME_STATUS // ${new Date().toTimeString().split(' ')[0]}</span>
+    </div>
+    <div style="border:1px solid var(--border);padding:12px;margin-bottom:14px;border-radius:2px">
+      <div style="font-size:22px;font-weight:900;font-family:'Black Han Sans';margin-bottom:6px;color:${st.color}">${st.badge}</div>
+      <div style="font-size:12px;color:var(--text-muted)">${st.table}</div>
+    </div>
+    <div style="border-left:2px solid var(--green);padding:10px 12px;background:rgba(0,255,136,0.04);font-size:13px;font-style:italic;color:var(--green)">
+      🦁 강무열:<br>${st.msg}
+    </div>
+  `;
+  openModal('modal-status');
+}
+
+// ── 채팅 이동 ──
+function goToChat(){ window.open('https://crac.ai','_blank'); }
+
+// ── 알림 대체 ──
+function showAlert(msg){ alert(msg); }
+
+// ── window resize 처리 ──
+window.addEventListener('resize',()=>{
+  const c=document.getElementById('waveCanvas');
+  if(c&&document.getElementById('modal-radio').classList.contains('open')){
+    c.width=c.offsetWidth;
+  }
+});
+</script>
+</body>
+</html>
